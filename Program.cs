@@ -18,7 +18,7 @@ namespace TextSorting
             stopwatch.Restart();
             RadixSort((string[])texts.Clone());
             stopwatch.Stop();
-            Console.WriteLine("Radix " + stopwatch.ElapsedMilliseconds + "ms");
+            Console.WriteLine(" ::: " + stopwatch.ElapsedMilliseconds + "ms");
 
             Console.ReadKey();
         }
@@ -40,7 +40,7 @@ namespace TextSorting
                 CountingSort(texts, i);
             }
 
-            //PrintText(texts);
+            //Console.Write(string.Join(", ", texts));
         }
 
         static void CountingSort(string[] texts, int index)
@@ -48,41 +48,30 @@ namespace TextSorting
             string[] output = new string[texts.Length];
             int[] count = new int[256];
 
-            //count each occurrence
+            //Count each occurrence
             foreach (string text in texts)
             {
-                if (text.Length - 1 < index)
-                    count[0]++;
-                else
-                {
-                    count[text[index]]++;
-                }
+                int selectedCountIndex = text.Length - 1 < index ? 0 : text[index];
+
+                count[selectedCountIndex]++;
             }
 
-            //add previous counts to the next so that they represent indexes
+            //Add previous counts to the next so that they represent indexes
             for (int i = 1; i < count.Length; i++)
                 count[i] += count[i - 1];
 
             //Build output array
             for (int i = texts.Length - 1; i >= 0; i--)
             {
-                if (texts[i].Length - 1 < index)
-                {
-                    output[count[0] - 1] = texts[i];
-                    count[0]--;
-                }
-                else
-                {
-                    output[count[texts[i][index]] - 1] = texts[i];
-                    count[texts[i][index]]--;
-                }
+                int selectedCountIndex = texts[i].Length - 1 < index ? 0 : texts[i][index];
+
+                output[count[selectedCountIndex] - 1] = texts[i];
+                count[selectedCountIndex]--;
             }
 
             //Copy output to array so that it contains sorted texts
             for (int i = 0; i < texts.Length; i++)
-            {
                 texts[i] = output[i];
-            }
         }
 
         static void RandomTextGenerator(string[] texts)
@@ -97,14 +86,6 @@ namespace TextSorting
                     randomText += (char)random.Next(97, 123);
                 }
                 texts[i] = randomText;
-            }
-        }
-
-        static void PrintText(string[] texts)
-        {
-            foreach (string item in texts)
-            {
-                Console.Write(item + ", ");
             }
         }
     }
